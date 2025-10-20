@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AiMine — AI untuk UMKM</title>
+  <style>
+    :root{
+      --bg:#0b1020;--card:#0f1724;--accent:#6ee7b7;--muted:#9aa4b2;
+      font-family: Inter, system-ui, sans-serif;
+    }
+    body{margin:0;background:linear-gradient(180deg,#05060a 0%, #0b1020 100%);color:#e6eef6;}
+    .wrap{max-width:980px;margin:40px auto;padding:24px;}
+    header{display:flex;justify-content:space-between;align-items:center}
+    h1{margin:0;font-size:28px;color:var(--accent)}
+    .hero{margin-top:28px;padding:24px;background:rgba(255,255,255,0.02);border-radius:12px}
+    .btn{background:var(--accent);color:#041023;padding:10px 14px;border-radius:10px;border:0;cursor:pointer}
+    .grid{display:grid;grid-template-columns:1fr 360px;gap:20px;margin-top:18px}
+    .card{background:var(--card);padding:16px;border-radius:12px}
+    label{display:block;margin:10px 0 6px;font-size:13px;color:var(--muted)}
+    input,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+    footer{margin-top:28px;color:var(--muted);font-size:13px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>AiMine</h1>
+      <nav><a href="#" style="color:var(--muted);text-decoration:none">Kontak</a></nav>
+    </header>
+
+    <section class="hero card">
+      <h2 style="color:#fff">AI Creator untuk UMKM — Text→Image, Image→Video, TTS, & Website Builder</h2>
+      <p style="color:var(--muted)">Buat materi promosi sinematik, foto produk, dan narasi suara tanpa perlu teknis. Gratis untuk penggunaan dasar.</p>
+      <div style="margin-top:12px">
+        <button class="btn" onclick="openPanel('tts')">Coba TTS</button>
+        <button class="btn" onclick="openPanel('img')">Buat Gambar</button>
+        <button class="btn" onclick="openPanel('video')">Buat Video</button>
+      </div>
+    </section>
+
+    <div class="grid">
+      <div>
+        <div id="mainPanel" class="card">
+          <h3 id="panelTitle">Selamat datang di AiMine</h3>
+          <p id="panelDesc" style="color:var(--muted)">Pilih fitur di samping atau tombol di atas.</p>
+        </div>
+      </div>
+
+      <aside class="card">
+        <h4>Quick Tools</h4>
+        <div style="margin-top:10px">
+          <button style="width:100%" onclick="openPanel('tts')">Text → Speech (TTS)</button>
+        </div>
+        <div style="margin-top:10px">
+          <button style="width:100%" onclick="openPanel('img')">Text → Image</button>
+        </div>
+        <div style="margin-top:10px">
+          <button style="width:100%" onclick="openPanel('video')">Text → Video</button>
+        </div>
+      </aside>
+    </div>
+
+    <footer>
+      <p>AiMine • Gratis & legal • Untuk UMKM lokal • Hubungi WA: <a href="https://wa.me/6281234567890" style="color:var(--accent)">+62 812-3456-7890</a></p>
+    </footer>
+  </div>
+
+  <script>
+    function openPanel(key){
+      const main = document.getElementById('mainPanel');
+      main.innerHTML = '';
+      if(key==='tts'){
+        main.innerHTML = `
+          <h3>Text → Speech (TTS)</h3>
+          <label>Masukkan teks</label>
+          <textarea id="ttsText" rows="4" placeholder="Tulis promosi singkat..."></textarea>
+          <div style="margin-top:8px"><button class="btn" onclick="playTTS()">Putar Suara</button></div>
+        `;
+      } else if(key==='img'){
+        main.innerHTML = `
+          <h3>Text → Image</h3>
+          <label>Prompt (contoh: 'Foto produk jam tangan, sinematik, golden hour')</label>
+          <input id="imgPrompt" placeholder="Tulis prompt..." />
+          <div style="margin-top:8px"><button class="btn" onclick="generateImage()">Generate</button></div>
+          <div id="imgResult" style="margin-top:12px"></div>
+        `;
+      } else if(key==='video'){
+        main.innerHTML = `
+          <h3>Text → Video</h3>
+          <label>Prompt singkat untuk video 10s</label>
+          <input id="videoPrompt" placeholder="Naskah/storyboard singkat..." />
+          <div style="margin-top:8px"><button class="btn" onclick="generateVideo()">Buat Video (Demo)</button></div>
+          <div id="videoResult" style="margin-top:12px"></div>
+        `;
+      }
+    }
+
+    function playTTS(){
+      const text = document.getElementById('ttsText').value || 'Halo, ini demo AiMine.';
+      if('speechSynthesis' in window){
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'id-ID';
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(u);
+      } else alert('TTS tidak didukung di browser ini.');
+    }
+
+    async function generateImage(){
+      const prompt = document.getElementById('imgPrompt').value || 'Produk UMKM, estetik';
+      const result = document.getElementById('imgResult');
+      result.innerHTML = 'Generating…';
+      setTimeout(()=>{ result.innerHTML = `<img src="https://picsum.photos/seed/${encodeURIComponent(prompt)}/600/360" style="width:100%;border-radius:8px"/>` },900);
+    }
+
+    async function generateVideo(){
+      const prompt = document.getElementById('videoPrompt').value || 'Video promo 10 detik';
+      const res = document.getElementById('videoResult');
+      res.innerHTML = 'Membuat video…';
+      setTimeout(()=>{ res.innerHTML = `<video controls style="width:100%;border-radius:8px"><source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4"></video>` },1200);
+    }
+  </script>
+</body>
+</html>
